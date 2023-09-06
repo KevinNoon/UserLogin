@@ -6,6 +6,7 @@ import com.optimised.backup.views.about.AboutView;
 import com.optimised.backup.views.backup.BackupView;
 import com.optimised.backup.views.engineers.EngineersView;
 import com.optimised.backup.views.login.RegisterForm;
+import com.optimised.backup.views.users.UsersView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -81,13 +82,14 @@ public class MainLayout extends AppLayout {
         }
         if (accessChecker.hasAccess(EngineersView.class)) {
             nav.addItem(new SideNavItem("Engineers", EngineersView.class, LineAwesomeIcon.FILE.create()));
-
         }
 
         if (accessChecker.hasAccess(RegisterForm.class)) {
-        nav.addItem(new SideNavItem("Resister", RegisterForm.class, LineAwesomeIcon.FILE.create()));
-
+        nav.addItem(new SideNavItem("Register User", RegisterForm.class, LineAwesomeIcon.FILE.create()));
     }
+        if (accessChecker.hasAccess(RegisterForm.class)) {
+            nav.addItem(new SideNavItem("Users", UsersView.class, LineAwesomeIcon.FILE.create()));
+        }
         return nav;
     }
 

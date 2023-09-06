@@ -1,6 +1,8 @@
 package com.optimised.backup.data.service;
 
 import com.optimised.backup.data.entity.User;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +44,14 @@ public class UserService {
 
     public void save(User user){
         repository.save(user);
+    }
+
+    public User findUserByUserName(String username){
+        return repository.findByUsername(username);
+    }
+
+    public List<User> findAllUsers(){
+        return repository.findAll();
     }
 
 }
