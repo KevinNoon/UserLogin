@@ -40,4 +40,8 @@ public class UserService {
         return (int) repository.count();
     }
 
+    public void save(User user){
+        repository.save(user);
+    }
+
 }
