@@ -5,6 +5,7 @@ import com.optimised.backup.security.AuthenticatedUser;
 import com.optimised.backup.views.about.AboutView;
 import com.optimised.backup.views.backup.BackupView;
 import com.optimised.backup.views.engineers.EngineersView;
+import com.optimised.backup.views.login.RegisterForm;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -83,6 +84,10 @@ public class MainLayout extends AppLayout {
 
         }
 
+        if (accessChecker.hasAccess(RegisterForm.class)) {
+        nav.addItem(new SideNavItem("Resister", RegisterForm.class, LineAwesomeIcon.FILE.create()));
+
+    }
         return nav;
     }
 
