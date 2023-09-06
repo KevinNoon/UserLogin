@@ -2,6 +2,7 @@ package com.optimised.backup.security;
 
 import com.optimised.backup.data.entity.User;
 import com.optimised.backup.data.service.UserRepository;
+import com.optimised.backup.views.MainLayout;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;

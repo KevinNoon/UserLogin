@@ -2,6 +2,7 @@ package com.optimised.backup.views.users;
 
 import com.optimised.backup.data.entity.User;
 import com.optimised.backup.data.service.UserService;
+import com.optimised.backup.security.AuthenticatedUser;
 import com.optimised.backup.security.SecurityConfiguration;
 import com.optimised.backup.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -22,9 +23,11 @@ public class UsersView extends VerticalLayout {
     UserForm form;
     UserService userService;
     SecurityConfiguration securityConfiguration;
-    public UsersView(UserService userService, SecurityConfiguration securityConfiguration){
+    AuthenticatedUser authenticatedUser;
+    public UsersView(UserService userService, SecurityConfiguration securityConfiguration,AuthenticatedUser authenticatedUser){
         this.userService = userService;
         this.securityConfiguration = securityConfiguration;
+        this.authenticatedUser = authenticatedUser;
         addClassName("list-view");
         setSizeFull();
         configureGrid();
@@ -59,14 +62,21 @@ public class UsersView extends VerticalLayout {
     }
 
     private void configureForm() {
-        form = new UserForm(userService, securityConfiguration);
+        form = new UserForm(userService, securityConfiguration, authenticatedUser);
         form.setWidth("25em");
         form.addSaveListener(this::saveUser);
+        form.addDeleteListener(this::deleteUser);
         form.addCloseListener(e -> closeEditor());
     }
 
     private void saveUser(UserForm.SaveEvent event) {
         userService.save(event.getUser());
+        updateList();
+        closeEditor();
+    }
+
+    private void deleteUser(UserForm.DeleteEvent event) {
+        userService.delete(event.getUser().getId());
         updateList();
         closeEditor();
     }

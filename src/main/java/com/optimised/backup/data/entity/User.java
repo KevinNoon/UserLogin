@@ -25,6 +25,7 @@ public class User extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
+    private Boolean isdarkmode;
     @Lob
     @Column(length = 1000000)
     private byte[] profilePicture;
@@ -60,4 +61,11 @@ public class User extends AbstractEntity {
         this.profilePicture = profilePicture;
     }
 
+    public Boolean getIsdarkmode() {
+        return isdarkmode;
+    }
+
+    public void setIsdarkmode(Boolean isdarkmode) {
+        this.isdarkmode = isdarkmode;
+    }
 }

@@ -1,15 +1,17 @@
 package com.optimised.backup.views;
 
 import com.optimised.backup.data.entity.User;
+import com.optimised.backup.data.service.UserRepository;
+import com.optimised.backup.data.service.UserService;
 import com.optimised.backup.security.AuthenticatedUser;
 import com.optimised.backup.views.about.AboutView;
 import com.optimised.backup.views.backup.BackupView;
 import com.optimised.backup.views.engineers.EngineersView;
-import com.optimised.backup.views.login.RegisterForm;
 import com.optimised.backup.views.users.UsersView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -22,19 +24,27 @@ import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
+import com.vaadin.flow.theme.lumo.Lumo;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import java.io.ByteArrayInputStream;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
 /**
  * The main view is a top-level placeholder for other views.
  */
-public class MainLayout extends AppLayout {
 
+@Route
+public class MainLayout extends AppLayout {
+    @Autowired
+    UserService userService;
     private H2 viewTitle;
 
     private AuthenticatedUser authenticatedUser;
@@ -49,6 +59,7 @@ public class MainLayout extends AppLayout {
         addHeaderContent();
     }
 
+    Checkbox isdarkmode = new Checkbox("Dark theme");
     private void addHeaderContent() {
         DrawerToggle toggle = new DrawerToggle();
         toggle.setAriaLabel("Menu toggle");
@@ -56,7 +67,7 @@ public class MainLayout extends AppLayout {
         viewTitle = new H2();
         viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
 
-        addToNavbar(true, toggle, viewTitle);
+        addToNavbar(true, toggle, viewTitle,isdarkmode);
     }
 
     private void addDrawerContent() {
@@ -71,7 +82,6 @@ public class MainLayout extends AppLayout {
 
     private SideNav createNavigation() {
         SideNav nav = new SideNav();
-
         if (accessChecker.hasAccess(AboutView.class)) {
             nav.addItem(new SideNavItem("About", AboutView.class, LineAwesomeIcon.FILE.create()));
 
@@ -84,22 +94,27 @@ public class MainLayout extends AppLayout {
             nav.addItem(new SideNavItem("Engineers", EngineersView.class, LineAwesomeIcon.FILE.create()));
         }
 
-        if (accessChecker.hasAccess(RegisterForm.class)) {
-        nav.addItem(new SideNavItem("Register User", RegisterForm.class, LineAwesomeIcon.FILE.create()));
-    }
-        if (accessChecker.hasAccess(RegisterForm.class)) {
+        if (accessChecker.hasAccess(UsersView.class)) {
             nav.addItem(new SideNavItem("Users", UsersView.class, LineAwesomeIcon.FILE.create()));
         }
+
         return nav;
     }
 
     private Footer createFooter() {
-        Footer layout = new Footer();
 
+        isdarkmode.addValueChangeListener(e -> {
+            setTheme(e.getValue());
+        });
+
+        Footer layout = new Footer();
         Optional<User> maybeUser = authenticatedUser.get();
         if (maybeUser.isPresent()) {
             User user = maybeUser.get();
-
+            if (user.getIsdarkmode()!= null) {
+                setTheme(user.getIsdarkmode());
+                isdarkmode.setValue(user.getIsdarkmode());
+            }
             Avatar avatar = new Avatar(user.getName());
             StreamResource resource = new StreamResource("profile-pic",
                     () -> new ByteArrayInputStream(user.getProfilePicture()));
@@ -120,9 +135,10 @@ public class MainLayout extends AppLayout {
             div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
             userName.add(div);
             userName.getSubMenu().addItem("Sign out", e -> {
+                user.setIsdarkmode(isdarkmode.getValue());
+                userService.save(user);
                 authenticatedUser.logout();
             });
-
             layout.add(userMenu);
         } else {
             Anchor loginLink = new Anchor("login", "Sign in");
@@ -140,6 +156,12 @@ public class MainLayout extends AppLayout {
 
     private String getCurrentPageTitle() {
         PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
+
         return title == null ? "" : title.value();
+    }
+    private void setTheme(boolean dark) {
+        var js = "document.documentElement.setAttribute('theme', $0)";
+
+        getElement().executeJs(js, dark ? Lumo.DARK : Lumo.LIGHT);
     }
 }

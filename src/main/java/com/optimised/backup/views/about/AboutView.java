@@ -14,7 +14,7 @@ import jakarta.annotation.security.RolesAllowed;
 @PageTitle("About")
 @Route(value = "about", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-@RolesAllowed("ADMIN")
+@RolesAllowed({"ADMIN","USER"})
 public class AboutView extends VerticalLayout {
 
     public AboutView() {

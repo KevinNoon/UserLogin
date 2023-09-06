@@ -3,12 +3,14 @@ package com.optimised.backup.views.users;
 import com.optimised.backup.data.Role;
 import com.optimised.backup.data.entity.User;
 import com.optimised.backup.data.service.UserService;
+import com.optimised.backup.security.AuthenticatedUser;
 import com.optimised.backup.security.SecurityConfiguration;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
@@ -18,6 +20,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
+
+import java.util.Optional;
 
 public class UserForm extends FormLayout {
 
@@ -30,15 +34,18 @@ public class UserForm extends FormLayout {
     PasswordField password1 = new PasswordField("Password");
     PasswordField password2 = new PasswordField("Confirm Password");
     CheckboxGroup<Role> roles = new CheckboxGroup<>();
+    Checkbox isdarkmode = new Checkbox("Dark Mode");
     Button save = new Button("Save");
+    Button delete = new Button("Delete");
     Button close = new Button("Cancel");
     Binder<User> binder = new BeanValidationBinder<>(User.class);
     private final UserService userService;
     private final SecurityConfiguration securityConfiguration;
-
-    public UserForm(UserService userService, SecurityConfiguration securityConfiguration) {
+    private final AuthenticatedUser authenticatedUser;
+    public UserForm(UserService userService, SecurityConfiguration securityConfiguration, AuthenticatedUser authenticatedUser) {
         this.userService = userService;
         this.securityConfiguration = securityConfiguration;
+        this.authenticatedUser = authenticatedUser;
         addClassName("user-form");
         roles.setLabel("Roles");
         roles.setItems(Role.ADMIN, Role.USER);
@@ -49,21 +56,25 @@ public class UserForm extends FormLayout {
                 password1,
                 password2,
                 roles,
+                isdarkmode,
                 createButtonsLayout());
     }
 
     private HorizontalLayout createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        delete.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
         save.addClickShortcut(Key.ENTER);
+        delete.addClickShortcut(Key.DELETE);
         close.addClickShortcut(Key.ESCAPE);
 
         save.addClickListener(event -> validateAndSave());
+        delete.addClickListener(event -> validateAndDelete());
         close.addClickListener(event -> fireEvent(new CloseEvent(this)));
 
         binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
-        return new HorizontalLayout(save, close);
+        return new HorizontalLayout(save,delete, close);
     }
 
     private void validateAndSave() {
@@ -102,6 +113,20 @@ public class UserForm extends FormLayout {
                      user.setHashedPassword(passwordHash);
                  }
                 fireEvent(new SaveEvent(this, binder.getBean()));
+            }
+        }
+    }
+
+    private void validateAndDelete(){
+        if (binder.isValid()){
+            Optional<User> maybeUser = authenticatedUser.get();
+            if (maybeUser.isPresent()){
+                if (!maybeUser.get().getUsername().equals(binder.getBean().getUsername())){
+                    fireEvent(new DeleteEvent(this,binder.getBean()));
+                } else {
+                    Notification.show("Can not delete yourself");
+                }
+
             }
         }
     }
