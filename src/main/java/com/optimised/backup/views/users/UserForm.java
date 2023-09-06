@@ -19,13 +19,12 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 
-import java.util.Set;
-
 public class UserForm extends FormLayout {
 
     public void setUser(User user) {
         binder.setBean(user);
     }
+
     TextField name = new TextField("Name");
     TextField username = new TextField("User Name");
     PasswordField password1 = new PasswordField("Password");
@@ -42,7 +41,7 @@ public class UserForm extends FormLayout {
         this.securityConfiguration = securityConfiguration;
         addClassName("user-form");
         roles.setLabel("Roles");
-        roles.setItems(Role.ADMIN,Role.USER);
+        roles.setItems(Role.ADMIN, Role.USER);
         binder.bindInstanceFields(this);
         add(
                 name,
@@ -69,40 +68,44 @@ public class UserForm extends FormLayout {
 
     private void validateAndSave() {
         if (binder.isValid()) {
-            System.out.println(this.binder.getBean().getName().isEmpty());
+            User user = binder.getBean();
             String p1 = password1.getValue().trim();
             String p2 = password2.getValue().trim();
-            if (name.getValue().trim().isEmpty()){
+
+            if (name.getValue().trim().isEmpty()) {
                 Notification.show("Name must not be empty");
-            } else if (username.getValue().trim().isEmpty()){
+            } else if (username.getValue().trim().isEmpty()) {
                 Notification.show("User name must not be empty");
             }
-            else if (p1.isEmpty()){
+
+
+            else if ((p1.isEmpty()) && (user.getId() == null)) {
                 Notification.show("Password must not be empty");
             }
-            else if (p1.length() < 8){
+            else if ((p1.length() < 8) && (user.getId() == null)) {
                 Notification.show("Password must have a minimum of 8 characters");
-            }else  if (!p1.equals(p2)){
-                Notification.show("Passwords much match");
-            } else if (roles.getSelectedItems().isEmpty()){
-                Notification.show("User must have at least one role");
-            } else if (this.userService.findUserByUserName(username.getValue()) != null){
-                Notification.show("This user name is used");
             }
-            else {
-                User user = new User();
-                user.setName(name.getValue());
-                user.setUsername(username.getValue());
-                String passwordHash = this.securityConfiguration.passwordEncoder().encode(p1);
-                user.setHashedPassword(passwordHash);
-                Set<Role> userRoles = roles.getSelectedItems();
-                user.setRoles(userRoles);
-                userService.save(user);
-                Notification.show("User registered");
+            else if ((!p1.equals(p2)) && (user.getId() == null)) {
+                Notification.show("Passwords much match");
+            }
+            else if (!password1.isEmpty() && (p1.length() < 8)){
+                    Notification.show("Password must have a minimum of 8 characters");
+            }
+            else if (!password1.isEmpty() && !p1.equals(p2)){
+                    Notification.show("Passwords much match");
+            }
+            else if (roles.getSelectedItems().isEmpty()) {
+                Notification.show("User must have at least one role");
+            } else {
+                 if (!p1.isEmpty()) {
+                     String passwordHash = this.securityConfiguration.passwordEncoder().encode(p1);
+                     user.setHashedPassword(passwordHash);
+                 }
                 fireEvent(new SaveEvent(this, binder.getBean()));
             }
         }
     }
+
     public static abstract class UserFormEvent extends ComponentEvent<UserForm> {
         private User user;
 
@@ -144,6 +147,7 @@ public class UserForm extends FormLayout {
     public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
         return addListener(SaveEvent.class, listener);
     }
+
     public Registration addCloseListener(ComponentEventListener<CloseEvent> listener) {
         return addListener(CloseEvent.class, listener);
     }

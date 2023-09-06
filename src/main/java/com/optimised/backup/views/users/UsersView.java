@@ -66,7 +66,7 @@ public class UsersView extends VerticalLayout {
     }
 
     private void saveUser(UserForm.SaveEvent event) {
-       // userService.save(event.getUser());
+        userService.save(event.getUser());
         updateList();
         closeEditor();
     }
@@ -83,6 +83,7 @@ public class UsersView extends VerticalLayout {
         if (user == null) {
             closeEditor();
         } else {
+
             form.setUser(user);
             form.setVisible(true);
             addClassName("editing");
