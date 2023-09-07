@@ -15,7 +15,7 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 
 @RolesAllowed("ADMIN")
-@PageTitle("Cylon Backup Manager")
+@PageTitle("Users")
 @Route(value = "users", layout = MainLayout.class)
 public class UsersView extends VerticalLayout {
 

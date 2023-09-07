@@ -2,22 +2,18 @@ package com.optimised.backup.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.optimised.backup.data.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
-import lombok.Data;
+import jakarta.persistence.*;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "application_user")
-public class User extends AbstractEntity {
+public class User {
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String username;
     private String name;
     @JsonIgnore
@@ -67,5 +63,12 @@ public class User extends AbstractEntity {
 
     public void setIsdarkmode(Boolean isdarkmode) {
         this.isdarkmode = isdarkmode;
+    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

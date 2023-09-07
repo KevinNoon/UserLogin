@@ -1,8 +1,7 @@
 package com.optimised.backup.security;
 
 import com.optimised.backup.data.entity.User;
-import com.optimised.backup.data.service.UserRepository;
-import com.optimised.backup.views.MainLayout;
+import com.optimised.backup.data.repositories.UserRepo;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class AuthenticatedUser {
 
-    private final UserRepository userRepository;
+    private final UserRepo userRepository;
     private final AuthenticationContext authenticationContext;
 
-    public AuthenticatedUser(AuthenticationContext authenticationContext, UserRepository userRepository) {
+    public AuthenticatedUser(AuthenticationContext authenticationContext, UserRepo userRepository) {
         this.userRepository = userRepository;
         this.authenticationContext = authenticationContext;
     }

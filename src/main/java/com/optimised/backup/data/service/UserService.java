@@ -1,20 +1,21 @@
 package com.optimised.backup.data.service;
 
 import com.optimised.backup.data.entity.User;
-
-import java.util.List;
-import java.util.Optional;
+import com.optimised.backup.data.repositories.UserRepo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UserService {
 
-    private final UserRepository repository;
+    private final UserRepo repository;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepo repository) {
         this.repository = repository;
     }
 

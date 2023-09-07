@@ -1,41 +1,37 @@
 package com.optimised.backup.views;
 
 import com.optimised.backup.data.entity.User;
-import com.optimised.backup.data.service.UserRepository;
 import com.optimised.backup.data.service.UserService;
 import com.optimised.backup.security.AuthenticatedUser;
 import com.optimised.backup.views.about.AboutView;
 import com.optimised.backup.views.backup.BackupView;
+import com.optimised.backup.views.checkout.CheckoutView;
 import com.optimised.backup.views.engineers.EngineersView;
+import com.optimised.backup.views.settings.PathsView;
+import com.optimised.backup.views.sites.StoreNumberView;
 import com.optimised.backup.views.users.UsersView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.contextmenu.MenuItem;
-import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Footer;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.theme.lumo.Lumo;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import java.io.ByteArrayInputStream;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.lineawesome.LineAwesomeIcon;
+
+import java.io.ByteArrayInputStream;
+import java.util.Optional;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -84,11 +80,15 @@ public class MainLayout extends AppLayout {
         SideNav nav = new SideNav();
         if (accessChecker.hasAccess(AboutView.class)) {
             nav.addItem(new SideNavItem("About", AboutView.class, LineAwesomeIcon.FILE.create()));
-
         }
         if (accessChecker.hasAccess(BackupView.class)) {
             nav.addItem(new SideNavItem("Backup", BackupView.class, LineAwesomeIcon.COLUMNS_SOLID.create()));
-
+        }
+        if (accessChecker.hasAccess(StoreNumberView.class)) {
+            nav.addItem(new SideNavItem("Store Number", StoreNumberView.class, LineAwesomeIcon.FILE.create()));
+        }
+        if (accessChecker.hasAccess(CheckoutView.class)) {
+            nav.addItem(new SideNavItem("Checkout", CheckoutView.class, LineAwesomeIcon.FILE.create()));
         }
         if (accessChecker.hasAccess(EngineersView.class)) {
             nav.addItem(new SideNavItem("Engineers", EngineersView.class, LineAwesomeIcon.FILE.create()));
@@ -96,6 +96,10 @@ public class MainLayout extends AppLayout {
 
         if (accessChecker.hasAccess(UsersView.class)) {
             nav.addItem(new SideNavItem("Users", UsersView.class, LineAwesomeIcon.FILE.create()));
+        }
+
+        if (accessChecker.hasAccess(PathsView.class)) {
+            nav.addItem(new SideNavItem("Paths", PathsView.class, LineAwesomeIcon.FILE.create()));
         }
 
         return nav;

@@ -1,7 +1,7 @@
 package com.optimised.backup.security;
 
 import com.optimised.backup.data.entity.User;
-import com.optimised.backup.data.service.UserRepository;
+import com.optimised.backup.data.repositories.UserRepo;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserRepo userRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public UserDetailsServiceImpl(UserRepo userRepository) {
         this.userRepository = userRepository;
     }
 
