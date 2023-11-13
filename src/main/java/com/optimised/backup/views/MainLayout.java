@@ -120,9 +120,10 @@ public class MainLayout extends AppLayout {
                 isdarkmode.setValue(user.getIsdarkmode());
             }
             Avatar avatar = new Avatar(user.getName());
+            if (user.getProfilePicture() != null) {
             StreamResource resource = new StreamResource("profile-pic",
                     () -> new ByteArrayInputStream(user.getProfilePicture()));
-            avatar.setImageResource(resource);
+            avatar.setImageResource(resource);}
             avatar.setThemeName("xsmall");
             avatar.getElement().setAttribute("tabindex", "-1");
 

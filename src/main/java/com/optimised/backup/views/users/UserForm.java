@@ -8,6 +8,7 @@ import com.optimised.backup.security.SecurityConfiguration;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -35,6 +36,8 @@ public class UserForm extends FormLayout {
     PasswordField password2 = new PasswordField("Confirm Password");
     CheckboxGroup<Role> roles = new CheckboxGroup<>();
     Checkbox isdarkmode = new Checkbox("Dark Mode");
+
+    Avatar profilePicture = new Avatar();
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
@@ -57,6 +60,7 @@ public class UserForm extends FormLayout {
                 password2,
                 roles,
                 isdarkmode,
+                profilePicture,
                 createButtonsLayout());
     }
 
